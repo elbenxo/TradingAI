@@ -14,17 +14,19 @@ TradingAI leverages artificial intelligence and machine learning techniques to h
 - ✅ **Opportunity Detection**: Automated identification of trading signals based on technical indicators
 - ✅ **Trend Analysis**: Analyze market trends using multiple indicators
 - ✅ **Multi-Symbol Analysis**: Analyze multiple stocks simultaneously
+- ✅ **Backtesting Framework**: Validate strategies on historical data with comprehensive performance metrics
+- ✅ **Performance Metrics**: Win rate, profit factor, max drawdown, Sharpe ratio calculations
 - ✅ **Configurable Parameters**: Customize analysis via YAML configuration
 
 ### Planned Features
 - **Pattern Recognition**: Identify chart patterns (head & shoulders, triangles, etc.)
 - **Machine Learning Models**: Predictive models for price movements
-- **Risk Assessment**: Calculate risk-reward ratios and position sizing
+- **Enhanced Risk Management**: Advanced position sizing and portfolio optimization
 - **Multi-Market Support**: Enhanced support for forex, cryptocurrencies, and options
-- **Backtesting Framework**: Test strategies against historical data
 - **Alert System**: Real-time notifications for opportunities
 - **Dashboard**: Web-based interface for monitoring
 - **API Integration**: Connect with trading platforms for execution
+- **Paper Trading**: Simulate live trading without real money
 
 ## Technology Stack
 
@@ -121,6 +123,56 @@ Analyze multiple symbols:
 python -m tradingai.main AAPL MSFT GOOGL TSLA --days 180
 ```
 
+### Backtesting
+
+Backtest a strategy on historical data:
+```bash
+python -m tradingai.backtest_cli AAPL --days 730 --capital 10000
+```
+
+Compare all strategies:
+```bash
+python -m tradingai.backtest_cli AAPL --compare
+```
+
+Backtest with custom parameters:
+```bash
+python -m tradingai.backtest_cli TSLA --days 365 --capital 25000 \
+  --position-size 0.15 --stop-loss 0.03 --take-profit 0.15 \
+  --strategy rsi --min-confidence 0.75
+```
+
+Python backtesting example:
+```python
+from datetime import datetime, timedelta
+from tradingai.data.collector import get_collector
+from tradingai.models.backtest import Backtester
+
+# Fetch data
+collector = get_collector('yfinance')
+data = collector.fetch_historical_data('AAPL',
+    datetime.now() - timedelta(days=730),
+    datetime.now())
+
+# Configure backtester
+backtester = Backtester(
+    initial_capital=10000.0,
+    position_size_pct=0.1,
+    stop_loss_pct=0.05,
+    take_profit_pct=0.10,
+    min_confidence=0.7
+)
+
+# Run backtest
+results = backtester.backtest('AAPL', data, strategy='all')
+
+# Display results
+print(f"Total Return: {results.total_return:.2f}%")
+print(f"Win Rate: {results.win_rate:.2f}%")
+print(f"Profit Factor: {results.profit_factor:.2f}")
+print(f"Max Drawdown: {results.max_drawdown:.2f}%")
+```
+
 ### Running Tests
 
 ```bash
@@ -148,6 +200,7 @@ TradingAI/
 │   └── tradingai/
 │       ├── __init__.py
 │       ├── main.py             # CLI entry point
+│       ├── backtest_cli.py     # Backtesting CLI
 │       ├── data/
 │       │   ├── collector.py    # Data collection from various sources
 │       │   └── __init__.py
@@ -157,6 +210,9 @@ TradingAI/
 │       ├── analysis/
 │       │   ├── opportunities.py # Opportunity detection logic
 │       │   └── __init__.py
+│       ├── models/
+│       │   ├── backtest.py     # Backtesting engine
+│       │   └── __init__.py
 │       └── utils/
 │           ├── config.py       # Configuration management
 │           ├── logger.py       # Logging utilities
@@ -164,7 +220,8 @@ TradingAI/
 ├── tests/
 │   ├── unit/                   # Unit tests
 │   │   ├── test_technical_indicators.py
-│   │   └── test_opportunities.py
+│   │   ├── test_opportunities.py
+│   │   └── test_backtest.py
 │   └── integration/            # Integration tests
 ├── data/
 │   ├── raw/                    # Raw market data
@@ -172,7 +229,8 @@ TradingAI/
 ├── models/
 │   └── saved/                  # Saved ML models
 ├── examples/
-│   └── quick_start.py          # Quick start example
+│   ├── quick_start.py          # Quick start example
+│   └── backtest_example.py     # Backtesting examples
 └── docs/                       # Additional documentation
 ```
 
@@ -192,8 +250,9 @@ TradingAI/
 - [ ] Advanced pattern recognition algorithms
 
 ### Phase 3: Intelligence Layer (In Progress)
+- [x] Implement backtesting framework
+- [x] Performance metrics and analytics
 - [ ] Train ML models for price prediction
-- [ ] Implement backtesting framework
 - [ ] Develop risk assessment algorithms
 - [ ] Portfolio optimization
 
@@ -227,4 +286,4 @@ For questions or support, please open an issue on GitHub.
 
 ---
 
-**Status**: 🚀 **Alpha v0.1.0** - Core functionality implemented and ready for testing!
+**Status**: 🚀 **Alpha v0.2.0** - Core functionality + Backtesting framework implemented!
