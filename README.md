@@ -9,37 +9,40 @@ TradingAI leverages artificial intelligence and machine learning techniques to h
 ## Features
 
 ### Current Features
-- Project initialization and setup
+- ✅ **Data Collection**: Fetch historical and real-time market data via Yahoo Finance
+- ✅ **Technical Indicators**: Calculate RSI, MACD, Moving Averages, Bollinger Bands, ATR, Stochastic Oscillator
+- ✅ **Opportunity Detection**: Automated identification of trading signals based on technical indicators
+- ✅ **Trend Analysis**: Analyze market trends using multiple indicators
+- ✅ **Multi-Symbol Analysis**: Analyze multiple stocks simultaneously
+- ✅ **Configurable Parameters**: Customize analysis via YAML configuration
 
 ### Planned Features
-- **Market Data Analysis**: Real-time processing of market data from multiple sources
-- **Pattern Recognition**: Identify technical patterns and trends using machine learning
-- **Opportunity Detection**: Automated scanning for trading opportunities based on configurable criteria
-- **Risk Assessment**: Evaluate risk-reward ratios for potential trades
-- **Multi-Market Support**: Support for stocks, forex, cryptocurrencies, and other financial instruments
-- **Technical Indicators**: Integration of popular technical indicators (RSI, MACD, Moving Averages, etc.)
-- **Backtesting**: Test trading strategies against historical data
-- **Alert System**: Real-time notifications for identified opportunities
-- **Dashboard**: Web-based interface for monitoring and analysis
-- **API Integration**: Connect with popular trading platforms and data providers
+- **Pattern Recognition**: Identify chart patterns (head & shoulders, triangles, etc.)
+- **Machine Learning Models**: Predictive models for price movements
+- **Risk Assessment**: Calculate risk-reward ratios and position sizing
+- **Multi-Market Support**: Enhanced support for forex, cryptocurrencies, and options
+- **Backtesting Framework**: Test strategies against historical data
+- **Alert System**: Real-time notifications for opportunities
+- **Dashboard**: Web-based interface for monitoring
+- **API Integration**: Connect with trading platforms for execution
 
 ## Technology Stack
 
-The technology stack will be determined based on project requirements. Potential technologies include:
-
-- **Backend**: Python (for ML/AI capabilities)
-- **Machine Learning**: TensorFlow, PyTorch, scikit-learn
-- **Data Processing**: pandas, NumPy
-- **Market Data**: APIs from financial data providers
-- **Database**: PostgreSQL, TimescaleDB (for time-series data)
-- **Frontend**: React, Next.js (for dashboard)
-- **Real-time Processing**: WebSockets, Redis
+- **Language**: Python 3.9+
+- **Data Processing**: pandas, NumPy, SciPy
+- **Market Data**: yfinance, Alpha Vantage (planned)
+- **Technical Analysis**: Custom implementations + TA-Lib
+- **Machine Learning**: TensorFlow, PyTorch, scikit-learn (planned)
+- **Configuration**: YAML, python-dotenv
+- **Testing**: pytest, pytest-cov
 
 ## Getting Started
 
 ### Prerequisites
 
-Prerequisites will be defined as the project develops.
+- Python 3.9 or higher
+- pip (Python package manager)
+- (Optional) Virtual environment tool (venv, conda)
 
 ### Installation
 
@@ -48,54 +51,162 @@ Prerequisites will be defined as the project develops.
 git clone https://github.com/elbenxo/TradingAI.git
 cd TradingAI
 
-# Installation instructions will be added as the project develops
+# Create virtual environment (recommended)
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Install the package in development mode
+pip install -e .
 ```
 
 ### Configuration
 
-Configuration details will be provided as features are implemented.
+1. Copy the example environment file:
+```bash
+cp .env.example .env
+```
+
+2. Edit `.env` and add your API keys (optional for basic usage):
+```bash
+ALPHA_VANTAGE_API_KEY=your_key_here
+```
+
+3. Customize `config.yaml` for your preferences:
+```yaml
+trading:
+  risk_tolerance: 0.02
+  max_position_size: 0.1
+
+opportunity_detection:
+  min_confidence: 0.7
+```
 
 ## Usage
 
-Usage examples and documentation will be added as features are developed.
+### Quick Start Example
+
+```python
+from datetime import datetime, timedelta
+from tradingai.data.collector import get_collector
+from tradingai.analysis.opportunities import OpportunityAnalyzer
+
+# Fetch data
+collector = get_collector('yfinance')
+end_date = datetime.now()
+start_date = end_date - timedelta(days=365)
+data = collector.fetch_historical_data('AAPL', start_date, end_date)
+
+# Analyze opportunities
+analyzer = OpportunityAnalyzer(min_confidence=0.7)
+result = analyzer.find_opportunities(data, 'AAPL')
+
+# Display results
+print(f"Found {result['opportunity_count']} opportunities")
+for opp in result['opportunities']:
+    print(f"- {opp['signal']}: {opp['confidence']:.2%} confidence")
+```
+
+### Command Line Interface
+
+Analyze a single symbol:
+```bash
+python -m tradingai.main AAPL --single --days 365
+```
+
+Analyze multiple symbols:
+```bash
+python -m tradingai.main AAPL MSFT GOOGL TSLA --days 180
+```
+
+### Running Tests
+
+```bash
+# Run all tests
+pytest
+
+# Run with coverage report
+pytest --cov=src/tradingai --cov-report=html
+
+# Run only unit tests
+pytest tests/unit/
+```
 
 ## Project Structure
 
 ```
 TradingAI/
-├── README.md           # Project documentation
-├── data/              # Market data and datasets (to be created)
-├── models/            # ML models (to be created)
-├── src/               # Source code (to be created)
-├── tests/             # Test suite (to be created)
-└── docs/              # Additional documentation (to be created)
+├── README.md                    # Project documentation
+├── requirements.txt             # Python dependencies
+├── setup.py                     # Package setup configuration
+├── config.yaml                  # Application configuration
+├── .env.example                 # Example environment variables
+├── pytest.ini                   # Testing configuration
+├── src/
+│   └── tradingai/
+│       ├── __init__.py
+│       ├── main.py             # CLI entry point
+│       ├── data/
+│       │   ├── collector.py    # Data collection from various sources
+│       │   └── __init__.py
+│       ├── indicators/
+│       │   ├── technical.py    # Technical indicator calculations
+│       │   └── __init__.py
+│       ├── analysis/
+│       │   ├── opportunities.py # Opportunity detection logic
+│       │   └── __init__.py
+│       └── utils/
+│           ├── config.py       # Configuration management
+│           ├── logger.py       # Logging utilities
+│           └── __init__.py
+├── tests/
+│   ├── unit/                   # Unit tests
+│   │   ├── test_technical_indicators.py
+│   │   └── test_opportunities.py
+│   └── integration/            # Integration tests
+├── data/
+│   ├── raw/                    # Raw market data
+│   └── processed/              # Processed datasets
+├── models/
+│   └── saved/                  # Saved ML models
+├── examples/
+│   └── quick_start.py          # Quick start example
+└── docs/                       # Additional documentation
 ```
 
 ## Development Roadmap
 
-### Phase 1: Foundation
-- [ ] Set up project structure
-- [ ] Define data sources and APIs
-- [ ] Implement basic data collection
+### Phase 1: Foundation ✅ COMPLETED
+- [x] Set up project structure
+- [x] Define data sources and APIs
+- [x] Implement basic data collection
+- [x] Configuration management
+- [x] Logging system
 
-### Phase 2: Analysis Engine
-- [ ] Develop technical indicator calculations
-- [ ] Implement pattern recognition algorithms
-- [ ] Create opportunity scoring system
+### Phase 2: Analysis Engine ✅ COMPLETED
+- [x] Develop technical indicator calculations
+- [x] Create opportunity detection system
+- [x] Implement trend analysis
+- [ ] Advanced pattern recognition algorithms
 
-### Phase 3: Intelligence Layer
-- [ ] Train ML models for prediction
+### Phase 3: Intelligence Layer (In Progress)
+- [ ] Train ML models for price prediction
 - [ ] Implement backtesting framework
 - [ ] Develop risk assessment algorithms
+- [ ] Portfolio optimization
 
 ### Phase 4: User Interface
 - [ ] Build web dashboard
-- [ ] Implement alert system
-- [ ] Create API endpoints
+- [ ] Implement real-time alert system
+- [ ] Create REST API endpoints
+- [ ] Mobile notifications
 
 ### Phase 5: Production
-- [ ] Optimize performance
-- [ ] Implement monitoring and logging
+- [ ] Optimize performance and scalability
+- [ ] Implement comprehensive monitoring
+- [ ] Add database persistence
 - [ ] Deploy to production environment
 
 ## Contributing
@@ -116,4 +227,4 @@ For questions or support, please open an issue on GitHub.
 
 ---
 
-**Status**: 🚧 Project in initial development phase
+**Status**: 🚀 **Alpha v0.1.0** - Core functionality implemented and ready for testing!

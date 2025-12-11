@@ -1,0 +1,60 @@
+# TradingAI Configuration
+
+# Application Settings
+app:
+  name: "TradingAI"
+  version: "0.1.0"
+  log_level: "INFO"
+  environment: "development"
+
+# Data Sources
+data_sources:
+  primary: "yfinance"
+  backup: "alpha_vantage"
+  update_interval: 300  # seconds
+
+# Technical Indicators
+indicators:
+  moving_averages:
+    - 20
+    - 50
+    - 200
+  rsi:
+    period: 14
+    overbought: 70
+    oversold: 30
+  macd:
+    fast: 12
+    slow: 26
+    signal: 9
+  bollinger_bands:
+    period: 20
+    std_dev: 2
+
+# Trading Parameters
+trading:
+  risk_tolerance: 0.02  # 2% of portfolio
+  max_position_size: 0.1  # 10% of portfolio
+  stop_loss_pct: 0.05  # 5%
+  take_profit_pct: 0.10  # 10%
+
+# Opportunity Detection
+opportunity_detection:
+  min_confidence: 0.7  # 70% confidence threshold
+  scan_interval: 60  # seconds
+  markets:
+    - "stocks"
+    - "crypto"
+    - "forex"
+
+# Database
+database:
+  type: "postgresql"
+  pool_size: 10
+  timeout: 30
+
+# API Rate Limits
+rate_limits:
+  alpha_vantage: 5  # requests per minute
+  polygon: 100
+  yfinance: 2000
