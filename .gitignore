@@ -44,6 +44,9 @@ data/processed/*
 !data/raw/.gitkeep
 !data/processed/.gitkeep
 
+# Screener output
+out/
+
 # Models
 models/saved/*
 !models/saved/.gitkeep
